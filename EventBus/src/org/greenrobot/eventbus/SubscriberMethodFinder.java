@@ -164,7 +164,7 @@ class SubscriberMethodFinder {
             findState.skipSuperClasses = true;
         }
         for (Method method : methods) {
-            // XXX: 反射方法，  int modifiers = method.getModifiers(); method.getParameterTypes();
+            // XXX: 反射方法，int modifiers = method.getModifiers(); method.getParameterTypes();
             // method.getAnnotation(Subscribe.class);findState.clazz.getDeclaredMethods();
             int modifiers = method.getModifiers();
             if ((modifiers & Modifier.PUBLIC) != 0 && (modifiers & MODIFIERS_IGNORE) == 0) {
