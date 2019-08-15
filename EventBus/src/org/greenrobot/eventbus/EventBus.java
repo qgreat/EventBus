@@ -44,9 +44,11 @@ public class EventBus {
     static volatile EventBus defaultInstance;
 
     private static final EventBusBuilder DEFAULT_BUILDER = new EventBusBuilder();
+    //eventType 就是ModelBean，key为subscriber，订阅者，value为eventType的集合
     private static final Map<Class<?>, List<Class<?>>> eventTypesCache = new HashMap<>();
-
+    //subscription  里面封装了subscriber和SubscriberMethod：event，method，threadMode sticky等方法
     private final Map<Class<?>, CopyOnWriteArrayList<Subscription>> subscriptionsByEventType;
+    //
     private final Map<Object, List<Class<?>>> typesBySubscriber;
     private final Map<Class<?>, Object> stickyEvents;
 
@@ -78,6 +80,7 @@ public class EventBus {
 
     /** Convenience singleton for apps using a process-wide EventBus instance. */
     public static EventBus getDefault() {
+        // XXX: 换成局部变量
         EventBus instance = defaultInstance;
         if (instance == null) {
             synchronized (EventBus.class) {
@@ -114,6 +117,7 @@ public class EventBus {
         typesBySubscriber = new HashMap<>();
         stickyEvents = new ConcurrentHashMap<>();
         mainThreadSupport = builder.getMainThreadSupport();
+        //通过 Looper.getMainLooper() 获取主线程的Looper
         mainThreadPoster = mainThreadSupport != null ? mainThreadSupport.createPoster(this) : null;
         backgroundPoster = new BackgroundPoster(this);
         asyncPoster = new AsyncPoster(this);

@@ -36,6 +36,7 @@ class SubscriberMethodFinder {
     private static final int SYNTHETIC = 0x1000;
 
     private static final int MODIFIERS_IGNORE = Modifier.ABSTRACT | Modifier.STATIC | BRIDGE | SYNTHETIC;
+    //SubscriberMethod是Subscription里的变量
     private static final Map<Class<?>, List<SubscriberMethod>> METHOD_CACHE = new ConcurrentHashMap<>();
 
     private List<SubscriberInfoIndex> subscriberInfoIndexes;
@@ -55,7 +56,7 @@ class SubscriberMethodFinder {
     List<SubscriberMethod> findSubscriberMethods(Class<?> subscriberClass) {
         List<SubscriberMethod> subscriberMethods = METHOD_CACHE.get(subscriberClass);
         if (subscriberMethods != null) {
-            return subscriberMethods;
+            return subscriberMethods;//有缓存用缓存
         }
 
         if (ignoreGeneratedIndex) {
@@ -75,10 +76,10 @@ class SubscriberMethodFinder {
     private List<SubscriberMethod> findUsingInfo(Class<?> subscriberClass) {
         FindState findState = prepareFindState();
         findState.initForSubscriber(subscriberClass);
-        while (findState.clazz != null) {
+        while (findState.clazz != null) {//subscriberClass
             findState.subscriberInfo = getSubscriberInfo(findState);
             if (findState.subscriberInfo != null) {
-                SubscriberMethod[] array = findState.subscriberInfo.getSubscriberMethods();
+                SubscriberMethod[] array = findState.subscriberInfo.getSubscriberMethods();//获取Subscriber里的方法
                 for (SubscriberMethod subscriberMethod : array) {
                     if (findState.checkAdd(subscriberMethod.method, subscriberMethod.eventType)) {
                         findState.subscriberMethods.add(subscriberMethod);
@@ -106,6 +107,10 @@ class SubscriberMethodFinder {
         return subscriberMethods;
     }
 
+    /**
+     * @return
+     * 获取一个可用的，将List里的位置设置为null
+     */
     private FindState prepareFindState() {
         synchronized (FIND_STATE_POOL) {
             for (int i = 0; i < POOL_SIZE; i++) {
