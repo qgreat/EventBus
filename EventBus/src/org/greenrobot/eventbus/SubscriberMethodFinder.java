@@ -79,7 +79,7 @@ class SubscriberMethodFinder {
         while (findState.clazz != null) {//subscriberClass
             findState.subscriberInfo = getSubscriberInfo(findState);
             if (findState.subscriberInfo != null) {
-                SubscriberMethod[] array = findState.subscriberInfo.getSubscriberMethods();//获取Subscriber里的方法
+                SubscriberMethod[] array = findState.subscriberInfo.getSubscriberMethods();//通过反射获取Subscriber里的方法
                 for (SubscriberMethod subscriberMethod : array) {
                     if (findState.checkAdd(subscriberMethod.method, subscriberMethod.eventType)) {
                         findState.subscriberMethods.add(subscriberMethod);
@@ -99,6 +99,7 @@ class SubscriberMethodFinder {
         synchronized (FIND_STATE_POOL) {
             for (int i = 0; i < POOL_SIZE; i++) {
                 if (FIND_STATE_POOL[i] == null) {
+                    //将findState保存
                     FIND_STATE_POOL[i] = findState;
                     break;
                 }
@@ -163,6 +164,8 @@ class SubscriberMethodFinder {
             findState.skipSuperClasses = true;
         }
         for (Method method : methods) {
+            // XXX: 反射方法，  int modifiers = method.getModifiers(); method.getParameterTypes();
+            // method.getAnnotation(Subscribe.class);findState.clazz.getDeclaredMethods();
             int modifiers = method.getModifiers();
             if ((modifiers & Modifier.PUBLIC) != 0 && (modifiers & MODIFIERS_IGNORE) == 0) {
                 Class<?>[] parameterTypes = method.getParameterTypes();
